@@ -1,9 +1,4 @@
-import {
-  DeviceEventEmitter,
-  NativeEventEmitter,
-  NativeModules,
-  Platform,
-} from 'react-native';
+import { DeviceEventEmitter, NativeEventEmitter, NativeModules, Platform } from "react-native";
 
 const NativeRNTritonPlayer = NativeModules.RNTritonPlayer;
 
@@ -12,8 +7,8 @@ class RNTritonPlayer {
     NativeRNTritonPlayer.configure(brand);
   }
 
-  static play(tritonName, tritonMount) {
-    NativeRNTritonPlayer.play(tritonName, tritonMount);
+  static play(tritonName, tritonMount, countryCode) {
+    NativeRNTritonPlayer.play(tritonName, tritonMount, countryCode);
   }
 
   /** Get current index [in seconds] of how far into a track we currently are - value is returned via the successCallback callback method */
@@ -101,6 +96,23 @@ class RNTritonPlayer {
     NativeRNTritonPlayer.unPause();
   }
 
+  static setNotificationStatus(status) {
+		NativeRNTritonPlayer.setNotificationStatus(status);
+	}
+
+  static updateNotificationData(albumArtUrl, title, subTitle) {
+		NativeRNTritonPlayer.updateNotificationData(albumArtUrl, title, subTitle);
+	}
+
+  ///IOS specific 
+  static updateNotificationDataWithLocalImage(imageObject, title, subTitle) {
+    if (Platform.OS === 'ios') {
+		  NativeRNTritonPlayer.updateNotificationDataWithLocalImage(imageObject, title, subTitle);
+    }else{
+      return;
+    }
+	}
+  
   static playOnDemandStream(trackURL) {
     NativeRNTritonPlayer.playOnDemandStream(trackURL);
   }

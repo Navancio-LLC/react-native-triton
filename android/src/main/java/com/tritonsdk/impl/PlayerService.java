@@ -1,6 +1,7 @@
 package com.tritonsdk.impl;
 
 import android.app.ActivityManager;
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,25 +10,34 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RemoteViews;
 
 import com.tritondigital.player.MediaPlayer;
+import com.tritondigital.player.StreamUrlBuilder;
 import com.tritondigital.player.TritonPlayer;
 import com.tritonsdk.R;
 
+import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
+import android.util.Log;
+import com.bumptech.glide.*;
+import android.graphics.Bitmap;
 
 public class PlayerService extends Service implements TritonPlayer.OnCuePointReceivedListener, TritonPlayer.OnStateChangedListener, TritonPlayer.OnMetaDataReceivedListener, AudioManager.OnAudioFocusChangeListener {
 
@@ -49,6 +59,7 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
     public static final String EVENT_STATE_CHANGED = "PlayerService.EVENT_STATE_CHANGED";
     public static final String EVENT_CURRENT_PLAYBACK_TIME_CHANGED = "PlayerService.EVENT_CURRENT_PLAYBACK_TIME_CHANGED";
     public static final int NOTIFICATION_SERVICE = 8;
+    public static boolean IS_NOTIF_ACTIVE = true;
     public static String BRAND = "slam";
 
     // Binder
@@ -131,13 +142,26 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
 
         String[] tTags = {"PLAYER:NOPREROLL"};
 
+        // Create the targeting parameters
+
         Bundle settings = new Bundle();
         settings.putString(TritonPlayer.SETTINGS_STATION_BROADCASTER, "Triton Digital");
-
+//        settings.putInt(TritonPlayer.SETTINGS_LOW_DELAY, -1);
         if (mCurrentStream != null)
         {
             settings.putString(TritonPlayer.SETTINGS_STATION_NAME, mCurrentStream.getTritonName());
             settings.putString(TritonPlayer.SETTINGS_STATION_MOUNT, mCurrentStream.getTritonMount());
+
+            if(mCurrentStream.getCountryCode() != ""){
+            //    Log.d("mCurrentStream", "dd "+mCurrentStream.getCountryCode());
+                try
+                {
+                    HashMap<String, String> targetingParams = new HashMap();
+                    targetingParams.put(StreamUrlBuilder.COUNTRY_CODE,  mCurrentStream.getCountryCode());
+                    settings.putSerializable(TritonPlayer.SETTINGS_TARGETING_PARAMS, targetingParams);
+                }
+                catch(Exception ex) {}
+            }
         }
         else if (mCurrentOnDemandStream != null) {
             settings.putString(TritonPlayer.SETTINGS_STREAM_URL, mCurrentOnDemandStream.getURL());
@@ -161,7 +185,24 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
                 if (audioManager != null) {
                     int result = audioManager.requestAudioFocus(PlayerService.this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
                     if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                        mPlayer.play();
+                        try{
+                            mPlayer.play();
+//                            try
+//                            {
+//                                Thread.sleep(500);
+//                            }
+//                            catch(InterruptedException ex)
+//                            {
+//                                Thread.currentThread().interrupt();
+//                            }
+
+//                            Log.d("getCastStreamingUrl" , TritonPlayer.SETTINGS_STATION_NAME);
+//                            if(mPlayer.getCastStreamingUrl() != null){
+//                                Log.d("getCastStreamingUrl" , mPlayer.getCastStreamingUrl());
+//                            }
+                        }catch (Exception e){
+//                            Log.d("getCastStreamingUrl" , e.getMessage());
+                        }
                     }
                 }
                 Looper.loop();
@@ -270,6 +311,10 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
     public void onCuePointReceived(MediaPlayer mediaPlayer, Bundle cuePoint) {
         if (cuePoint == null) return;
 
+//        for (String key : cuePoint.keySet())
+//        {
+//            Log.d("ReactNativeBleManager1", key + " = \"" + cuePoint.getString(key, "null") + "\"");
+//        }
 
         String cueType = cuePoint.getString("cue_type", null);
         if (cueType == null) return;
@@ -279,6 +324,23 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
                     String artist = cuePoint.getString("track_artist_name");
                     String song = cuePoint.getString("cue_title");
                     int duration = cuePoint.getInt("cue_time_duration", 0);
+
+                    // String track_album_name = cuePoint.getString("track_album_name", "null");
+                    // String track_genre = cuePoint.getString("track_genre", "null");
+                    // String cue_title = cuePoint.getString("cue_title", "null");
+                    // String track_artist_name = cuePoint.getString("track_artist_name", "null");
+                    // String track_album_publisher = cuePoint.getString("track_album_publisher", "null");
+                    // String track_product_url = cuePoint.getString("track_product_url", "null");
+                    // String cue_time_duration = cuePoint.getString("cue_time_duration", "null");
+
+                    // Log.d("ReactNativeBleManager", "cuePoint");
+                    // Log.d("ReactNativeBleManager", track_album_name);
+                    // Log.d("ReactNativeBleManager", track_genre);
+                    // Log.d("ReactNativeBleManager", cue_title);
+                    // Log.d("ReactNativeBleManager", track_artist_name);
+                    // Log.d("ReactNativeBleManager", track_album_publisher);
+                    // Log.d("ReactNativeBleManager", track_product_url);
+                    // Log.d("ReactNativeBleManager", cue_time_duration);
 
                     mCurrentTrack = new Track(song, artist, duration);
 
@@ -336,6 +398,18 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
 
     @Override
     public void onStateChanged(MediaPlayer mediaPlayer, int state) {
+         Log.d("States222", Integer.toString(state));
+
+        // Log.d("States",
+        //     TritonPlayer.STATE_CONNECTING + "  " +
+        //     TritonPlayer.STATE_PLAYING + "  " +
+        //     TritonPlayer.STATE_PAUSED + "  " +
+        //     TritonPlayer.STATE_COMPLETED + "  " +
+        //     TritonPlayer.STATE_STOPPED + "  " +
+        //     TritonPlayer.STATE_ERROR + "  "
+        // );
+
+
         final Integer[] states = {TritonPlayer.STATE_COMPLETED, TritonPlayer.STATE_STOPPED, TritonPlayer.STATE_ERROR, TritonPlayer.STATE_PAUSED};
         if (Arrays.asList(states).contains(state)) {
             AudioManager audioManager = getAudioManager();
@@ -377,6 +451,9 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
         if (isShowingNotification()) {
             return;
         }
+        if (!IS_NOTIF_ACTIVE){
+            return ;
+        }
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -415,7 +492,74 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
         updateNotification();
     }
 
+    public void updateNotificationData(String albumArtUrl, String title, String subTitle){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try
+                {
+                    Thread.sleep(300);
+                }
+                catch(InterruptedException ex)
+                {
+                    Thread.currentThread().interrupt();
+                }
+                mRemoteViews.setTextViewText(R.id.song_title, title);
+                mRemoteViews.setTextViewText(R.id.station_artist, subTitle);
+                if(albumArtUrl != "" && albumArtUrl != null){
+                    // Log.d("ReactNativeBleManager2",  "before Thread: "+ albumArtUrl);
+                    // Log.d("ReactNativeBleManager2",  "before Thread: "+ title);
+                    // Log.d("ReactNativeBleManager2",  "before Thread: "+ subTitle);
+                    // Boolean lastUrl = albumArtUrl;
+                    Looper.prepare();
+                    try {
+                        // Bitmap bitmap = Glide.with(getApplicationContext())
+                        //     .asBitmap()
+                        //     .load(albumArtUrl)
+                        //     .submit()
+                        //     .get();
+                        Bitmap bitmap;
+                        if(albumArtUrl.contains("http://") || albumArtUrl.contains("https://")){
+                            URL url = new URL(albumArtUrl);
+                            bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                            
+                            // bitmap = Glide.with(getApplicationContext())
+                            //     .asBitmap()
+                            //     .load(albumArtUrl)
+                            //     .submit()
+                            //     .get();
+                            // Log.d("ReactNativeBleManager211", "Inside: "+albumArtUrl);
+                        }else{
+                            int resourceId = getApplicationContext().getResources().getIdentifier(albumArtUrl, "drawable", getApplicationContext().getPackageName());
+                            // int resourceId = R.drawable.images_png_marker // This will work as well
+                            bitmap = BitmapFactory.decodeResource(getResources(), resourceId);
+                        }
+                        // Log.d("ReactNativeBleManager211", "after: "+albumArtUrl);
+                        if(bitmap != null){
+                            mRemoteViews.setImageViewBitmap(R.id.album_art, bitmap);
+                        }
+                        if (mNotificationManager != null && mBuilder != null) {
+                            mNotificationManager.notify(NOTIFICATION_SERVICE, mBuilder.build());
+                        }
+                        // Log.d("ReactNativeBleManager2", "after");
+                    } catch (Exception e) {
+                        Log.d("ReactNativeBleManager2", e.toString());
+                    }
+                    Looper.loop();
+                }else{
+                    mRemoteViews.setImageViewResource(R.id.album_art, R.drawable.ic_player_notification);
+                    if (mNotificationManager != null && mBuilder != null) {
+                        mNotificationManager.notify(NOTIFICATION_SERVICE, mBuilder.build());
+                    }
+                }
+            }
+    
+        }).start();
+    }
+
     private void updateNotification() {
+
         if (isShowingNotification()) {
             Intent stopIntent = new Intent(this, PlayerService.class);
             stopIntent.setAction(ACTION_STOP);
@@ -482,8 +626,9 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
             }
 
             if (!isPlaying() && mCurrentTrack == null) {
-                mRemoteViews.setTextViewText(R.id.song_title, "-");
-                mRemoteViews.setTextViewText(R.id.station_artist, "-");
+                // mRemoteViews.setTextViewText(R.id.song_title, R.strings.menu.RadioStation);
+                // mRemoteViews.setTextViewText(R.id.station_artist, "");
+                // mRemoteViews.setImageViewResource(R.id.album_art, R.drawable.ic_player_notification);
             }
 
             int clearDrawable;

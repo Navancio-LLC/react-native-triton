@@ -1,7 +1,14 @@
 declare module 'react-native-triton-player' {
   //export function configure({brand});
 
-  export function play(tritonName, tritonMount);
+  export function play(tritonName, tritonMount, countryCode);
+
+  export function setNotificationStatus(status);
+
+  export function updateNotificationData(albumArtUrl, title, subTitle);
+    
+  ///IOS specific 
+  export function updateNotificationDataWithLocalImage(imageObject, title, subTitle);
 
   export function playOnDemandStream(trackURL);
 

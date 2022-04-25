@@ -43,13 +43,19 @@ import RNTritonPlayer from "react-native-triton-player";
 
 RNTritonPlayer.playOnDemandStream(onDemandStreamUrl);
 
-RNTritonPlayer.play(tritonName, tritonMount);
+RNTritonPlayer.play(tritonName, tritonMount, countryCode); // Two character countryCode. The country in which the user resides.
 
 RNTritonPlayer.pause();
 
 RNTritonPlayer.unPause();
 
 RNTritonPlayer.stop();
+
+RNTritonPlayer.updateNotificationData(albumArtUrl, title, subTitle);
+
+/// Start only IOS For local image
+RNTritonPlayer.updateNotificationDataWithLocalImage(imageObject, title, subTitle);
+/// End only IOS
 
 RNTritonPlayer.addStreamChangeListener((currentTritonStreamData) => {
 	//do something with currentTritonStreamData when it changes

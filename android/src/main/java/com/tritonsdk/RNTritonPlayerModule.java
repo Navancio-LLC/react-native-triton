@@ -7,7 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.Arguments;
@@ -62,7 +65,7 @@ public class RNTritonPlayerModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void play(String tritonName, String tritonMount) {
+    public void play(String tritonName, String tritonMount, String countryCode) {
         initPlayer();
 
         if (mService != null) {
@@ -71,7 +74,7 @@ public class RNTritonPlayerModule extends ReactContextBaseJavaModule {
 
         Intent intent = new Intent(reactContext, PlayerService.class);
         intent.setAction(PlayerService.ACTION_PLAY);
-        intent.putExtra(PlayerService.ARG_STREAM, new Stream("", "", tritonName, tritonMount));
+        intent.putExtra(PlayerService.ARG_STREAM, new Stream("", "", tritonName, tritonMount, countryCode));
         reactContext.bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
         reactContext.startService(intent);
     }
@@ -141,6 +144,20 @@ public class RNTritonPlayerModule extends ReactContextBaseJavaModule {
     public void seekTo(int offset) {
         if (mService != null) {
             mService.seekTo(offset);
+        }
+    }
+
+    @ReactMethod
+    public void setNotificationStatus(boolean status) {
+        if (mService != null) {
+            mService.IS_NOTIF_ACTIVE = status;
+        }
+    }
+
+    @ReactMethod
+    public void updateNotificationData(String albumArtUrl, String title, String subTitle) {
+        if (mService != null) {
+            mService.updateNotificationData(albumArtUrl, title, subTitle);
         }
     }
 

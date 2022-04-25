@@ -1,5 +1,6 @@
 
 #import "RNTritonPlayer.h"
+#import "React/RCTConvert.h"
 
 NSString* const EventTrackChanged = @"trackChanged";
 NSString* const EventStreamChanged = @"streamChanged";
@@ -32,7 +33,7 @@ RCT_EXPORT_METHOD(configure:(NSString *)brand)
     // Does nothing
 }
 
-RCT_EXPORT_METHOD(play:(NSString *)tritonName tritonStation:(NSString *)tritonStation)
+RCT_EXPORT_METHOD(play:(NSString *)tritonName tritonStation:(NSString *)tritonStation  countryCode:(NSString *) countryCode)
 {
     // Init Triton Player if its not set yet
     if (self.tritonPlayer == NULL) {
@@ -41,14 +42,14 @@ RCT_EXPORT_METHOD(play:(NSString *)tritonName tritonStation:(NSString *)tritonSt
         self.title = @"-";
         self.state = 0;
     }
-    
     // Set Station Details
     NSDictionary *settings = @{
                                SettingsStationNameKey : tritonName,
                                SettingsBroadcasterKey : @"Triton Digital",
                                SettingsMountKey : tritonStation,
                                SettingsPlayerServicesRegion: @"EU",
-                               SettingsEnableLocationTrackingKey : @(NO),
+                               SettingsEnableLocationTrackingKey : @(YES),
+                               StreamParamExtraCountryKey: countryCode,
                                SettingsTtagKey : @[@"PLAYER:NOPREROLL"]
                                };
     
@@ -87,7 +88,7 @@ RCT_EXPORT_METHOD(playOnDemandStream:(NSString *)streamURL )
                                SettingsContentURLKey: streamURL,
                                SettingsBroadcasterKey : @"Triton Digital",
                                SettingsPlayerServicesRegion: @"EU",
-                               SettingsEnableLocationTrackingKey : @(NO),
+                               SettingsEnableLocationTrackingKey : @(YES),
                                SettingsTtagKey : @[@"PLAYER:NOPREROLL"]
                                };
     
@@ -208,7 +209,9 @@ RCT_EXPORT_METHOD(quit)
 }
 
 - (void)player:(TritonPlayer *)player didReceiveCuePointEvent:(CuePointEvent *)cuePointEvent {
+//    NSLog(@"didReceiveCuePointEvent11: %@", cuePointEvent.type);
     if ([cuePointEvent.type isEqualToString:EventTypeAd]) {
+//        NSLog(@"didReceiveCuePointEvent: Add");
         // Type CUE ad
         [self sendEventWithName:EventTrackChanged body:@{@"artist": @"-", @"title": @"-", @"isAd": @TRUE}];
         self.track = @"-";
@@ -216,6 +219,7 @@ RCT_EXPORT_METHOD(quit)
     } else if ([cuePointEvent.type isEqualToString:EventTypeTrack]) {
         // Type CUE track
         
+//        NSLog(@"didReceiveCuePointEvent: track");
         NSString *songTitle = [cuePointEvent.data objectForKey:CommonCueTitleKey];
         NSString *artistName = [cuePointEvent.data objectForKey:TrackArtistNameKey];
         NSString *durationTime = [cuePointEvent.data objectForKey:CommonCueTimeDurationKey];
@@ -230,6 +234,8 @@ RCT_EXPORT_METHOD(quit)
         
         self.track = artistName;
         self.title = songTitle;
+    }else{
+        [self sendEventWithName:EventTrackChanged body:@{@"artist": @"-", @"title": @"-", @"isAd": @FALSE}];
     }
     [self configureNowPlayingInfo];
 }
@@ -277,6 +283,11 @@ RCT_EXPORT_METHOD(quit)
     [newInfo setObject:self.title forKey:MPMediaItemPropertyTitle];
     [newInfo setObject:self.track forKey:MPMediaItemPropertyArtist];
     
+    if(self.albumArt){
+        [newInfo setObject:self.albumArt forKey:MPMediaItemPropertyArtwork];
+    }else{
+        NSLog(@"Empty Album");
+    }
     
     if (self.state == STATE_PAUSED) {
         [newInfo setValue:[NSNumber numberWithDouble:0] forKey:MPNowPlayingInfoPropertyPlaybackRate];
@@ -287,6 +298,61 @@ RCT_EXPORT_METHOD(quit)
     }
     // Update the now playing info
     info.nowPlayingInfo = newInfo;
+}
+
+RCT_EXPORT_METHOD(updateNotificationDataWithLocalImage:(id)imageObject: (NSString *)title: (NSString *)subTitle )
+{
+//    NSLog(@"updateNotificationData: With local image");
+    self.title = title;
+    self.track = subTitle;
+    [self configureNowPlayingInfo];
+    UIImage *image = [RCTConvert UIImage:imageObject];
+    if(image){
+        UIGraphicsEndImageContext();
+        MPMediaItemArtwork *imageArtwork = [[MPMediaItemArtwork alloc] initWithImage:image];
+        if(imageArtwork){
+//            NSLog(@"ImageArtwork Local success");
+            self.albumArt = imageArtwork;
+            [self configureNowPlayingInfo];
+        }else{
+//                NSLog(@"ImageArtwork error");
+        }
+    }else{
+//            NSLog(@"Image not found");
+    }
+}
+
+RCT_EXPORT_METHOD(updateNotificationData:(NSString *)albumArtUrl: (NSString *)title: (NSString *)subTitle )
+{
+//    NSLog(@"updateNotificationData: ");
+    self.title = title;
+    self.track = subTitle;
+    [self configureNowPlayingInfo];
+    
+    if(albumArtUrl && ![albumArtUrl isEqualToString: @""]){
+        
+//        NSLog(@"albumArtUrl success");
+        NSURL *url = [NSURL URLWithString:albumArtUrl];
+        NSData *data = [NSData dataWithContentsOfURL:url];
+    //    UIImage *img = [[[UIImage alloc] initWithData:data] autorelease];
+        UIImage * image = [UIImage imageWithData:data];
+        
+//        NSLog(@"albumArtUrl success end");
+
+        if(image){
+            UIGraphicsEndImageContext();
+            MPMediaItemArtwork *imageArtwork = [[MPMediaItemArtwork alloc] initWithImage:image];
+            if(imageArtwork){
+                NSLog(@"ImageArtwork success");
+                self.albumArt = imageArtwork;
+                [self configureNowPlayingInfo];
+            }else{
+//                NSLog(@"ImageArtwork error");
+            }
+        }else{
+//            NSLog(@"Image not found");
+        }
+    }
 }
 
 @end

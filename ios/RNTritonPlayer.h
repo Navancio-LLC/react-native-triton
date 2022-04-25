@@ -36,6 +36,7 @@ extern const NSInteger STATE_PAUSED;
     @property (strong, nonatomic) TritonPlayer *tritonPlayer;
     @property (strong, nonatomic) NSString *track;
     @property (strong, nonatomic) NSString *title;
+    @property (strong, nonatomic) MPMediaItemArtwork *albumArt;
     @property (nonatomic) NSInteger state;
     @property (nonatomic) BOOL interruptedOnPlayback;
 

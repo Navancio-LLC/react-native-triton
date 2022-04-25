@@ -9,21 +9,23 @@ public class Stream implements Serializable {
     private String tritonName;
     private String tritonMount;
     private int state;
+    private String countryCode = "";
     private boolean active;
 
     public Stream() {
 
     }
 
-    public Stream(String title, String description, String tritonName, String tritonMount) {
-        this(title, description, tritonName, tritonMount, false);
+    public Stream(String title, String description, String tritonName, String tritonMount, String countryCode) {
+        this(title, description, tritonName, tritonMount, countryCode,false);
     }
 
-    public Stream(String title, String description, String tritonName, String tritonMount, boolean active) {
+    public Stream(String title, String description, String tritonName, String tritonMount, String countryCode, boolean active) {
         this.title = title;
         this.description = description;
         this.tritonName = tritonName;
         this.tritonMount = tritonMount;
+        this.countryCode = countryCode;
         this.active = active;
     }
 
@@ -53,6 +55,10 @@ public class Stream implements Serializable {
 
     public String getTritonMount() {
         return tritonMount;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
     }
 
     public void setTritonMount(String tritonMount) {

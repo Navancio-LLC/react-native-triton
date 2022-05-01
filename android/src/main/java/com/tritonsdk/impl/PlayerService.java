@@ -187,21 +187,21 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
                     if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                         try{
                             mPlayer.play();
-//                            try
-//                            {
-//                                Thread.sleep(500);
-//                            }
-//                            catch(InterruptedException ex)
-//                            {
-//                                Thread.currentThread().interrupt();
-//                            }
+                        //    try
+                        //    {
+                        //        Thread.sleep(500);
+                        //    }
+                        //    catch(InterruptedException ex)
+                        //    {
+                        //        Thread.currentThread().interrupt();
+                        //    }
 
-//                            Log.d("getCastStreamingUrl" , TritonPlayer.SETTINGS_STATION_NAME);
-//                            if(mPlayer.getCastStreamingUrl() != null){
-//                                Log.d("getCastStreamingUrl" , mPlayer.getCastStreamingUrl());
-//                            }
+                        //    Log.d("getCastStreamingUrl" , TritonPlayer.SETTINGS_STATION_NAME);
+                        //    if(mPlayer.getCastStreamingUrl() != null){
+                        //        Log.d("getCastStreamingUrl" , mPlayer.getCastStreamingUrl());
+                        //    }
                         }catch (Exception e){
-//                            Log.d("getCastStreamingUrl" , e.getMessage());
+                        //    Log.d("getCastStreamingUrl" , e.getMessage());
                         }
                     }
                 }
@@ -398,7 +398,7 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
 
     @Override
     public void onStateChanged(MediaPlayer mediaPlayer, int state) {
-         Log.d("States222", Integer.toString(state));
+        //  Log.d("States222", Integer.toString(state));
 
         // Log.d("States",
         //     TritonPlayer.STATE_CONNECTING + "  " +
@@ -544,7 +544,7 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
                         }
                         // Log.d("ReactNativeBleManager2", "after");
                     } catch (Exception e) {
-                        Log.d("ReactNativeBleManager2", e.toString());
+                        // Log.d("ReactNativeBleManager2", e.toString());
                     }
                     Looper.loop();
                 }else{

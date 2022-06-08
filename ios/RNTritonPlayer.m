@@ -244,7 +244,7 @@ RCT_EXPORT_METHOD(quit)
     if (self.tritonPlayer != NULL && [self.tritonPlayer isExecuting]) {
         [self.tritonPlayer stop];
         [self sendEventWithName:EventStateChanged body:@{@"state": @(STATE_RELEASED)}];
-        self.tritonPlayer = NULL;
+//        self.tritonPlayer = NULL;
         self.interruptedOnPlayback = YES;
     }
 }

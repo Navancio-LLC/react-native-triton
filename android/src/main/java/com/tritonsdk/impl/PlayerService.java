@@ -172,6 +172,7 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
         settings.putString(TritonPlayer.SETTINGS_PLAYER_SERVICES_REGION, "EU");
         settings.putBoolean(TritonPlayer.SETTINGS_TARGETING_LOCATION_TRACKING_ENABLED, true);
         settings.putStringArray(TritonPlayer.SETTINGS_TTAGS, tTags);
+        settings.putInt("csegid",  7);
         mPlayer = new TritonPlayer(this, settings);
         mPlayer.setOnStateChangedListener(this);
         mPlayer.setOnCuePointReceivedListener(this);
@@ -189,7 +190,7 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
                             mPlayer.play();
                         //    try
                         //    {
-                        //        Thread.sleep(500);
+                        //        Thread.sleep(2000);
                         //    }
                         //    catch(InterruptedException ex)
                         //    {
@@ -199,6 +200,8 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
                         //    Log.d("getCastStreamingUrl" , TritonPlayer.SETTINGS_STATION_NAME);
                         //    if(mPlayer.getCastStreamingUrl() != null){
                         //        Log.d("getCastStreamingUrl" , mPlayer.getCastStreamingUrl());
+                        //    }else{
+                        //        Log.d("getCastStreamingUrl" , "mPlayer.getCastStreamingUrl()");
                         //    }
                         }catch (Exception e){
                         //    Log.d("getCastStreamingUrl" , e.getMessage());

@@ -50,7 +50,8 @@ RCT_EXPORT_METHOD(play:(NSString *)tritonName tritonStation:(NSString *)tritonSt
                                SettingsPlayerServicesRegion: @"EU",
                                SettingsEnableLocationTrackingKey : @(YES),
                                StreamParamExtraCountryKey: countryCode,
-                               SettingsTtagKey : @[@"PLAYER:NOPREROLL"]
+                               SettingsTtagKey : @[@"PLAYER:NOPREROLL"],
+                               @"csegid" : @(7)
                                };
     
     // mm

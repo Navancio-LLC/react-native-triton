@@ -88,14 +88,20 @@ RCT_EXPORT_METHOD(playOnDemandStream:(NSString *)streamURL )
         self.state = 0;
     }
     
+    NSDictionary *extraSettings = @{
+        StreamParamExtraCustomSegmentIdKey : @(7),
+        StreamParamExtraCountryKey: countryCode
+    };
+
     // Set on demand Stream URL Details
     NSDictionary *settings = @{
-                               SettingsContentURLKey: streamURL,
-                               SettingsBroadcasterKey : @"Triton Digital",
-                               SettingsPlayerServicesRegion: @"EU",
-                               SettingsEnableLocationTrackingKey : @(YES),
-                               SettingsTtagKey : @[@"PLAYER:NOPREROLL"]
-                               };
+        SettingsContentURLKey: streamURL,
+        SettingsBroadcasterKey : @"Triton Digital",
+        SettingsPlayerServicesRegion: @"EU",
+        SettingsEnableLocationTrackingKey : @(YES),
+        SettingsTtagKey : @[@"PLAYER:NOPREROLL"]
+        SettingsStreamParamsExtraKey: extraSettings
+    };
     
     // mm
     

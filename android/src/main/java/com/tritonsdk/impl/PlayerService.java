@@ -146,6 +146,10 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
 
         Bundle settings = new Bundle();
         settings.putString(TritonPlayer.SETTINGS_STATION_BROADCASTER, "Triton Digital");
+
+        HashMap<String, String> targetingParams = new HashMap();
+        targetingParams.put(StreamUrlBuilder.CUSTOM_SEGMENT_ID,  "7");
+
 //        settings.putInt(TritonPlayer.SETTINGS_LOW_DELAY, -1);
         if (mCurrentStream != null)
         {
@@ -156,9 +160,7 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
             //    Log.d("mCurrentStream", "dd "+mCurrentStream.getCountryCode());
                 try
                 {
-                    HashMap<String, String> targetingParams = new HashMap();
                     targetingParams.put(StreamUrlBuilder.COUNTRY_CODE,  mCurrentStream.getCountryCode());
-                    settings.putSerializable(TritonPlayer.SETTINGS_TARGETING_PARAMS, targetingParams);
                 }
                 catch(Exception ex) {}
             }
@@ -169,10 +171,10 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
             settings.putBoolean(TritonPlayer.SETTINGS_TIMESHIFT_ENABLED, true);
         }
 
+        settings.putSerializable(TritonPlayer.SETTINGS_TARGETING_PARAMS, targetingParams);
         settings.putString(TritonPlayer.SETTINGS_PLAYER_SERVICES_REGION, "EU");
         settings.putBoolean(TritonPlayer.SETTINGS_TARGETING_LOCATION_TRACKING_ENABLED, true);
         settings.putStringArray(TritonPlayer.SETTINGS_TTAGS, tTags);
-        settings.putInt("csegid",  7);
         mPlayer = new TritonPlayer(this, settings);
         mPlayer.setOnStateChangedListener(this);
         mPlayer.setOnCuePointReceivedListener(this);
@@ -188,23 +190,23 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
                     if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                         try{
                             mPlayer.play();
-                        //    try
-                        //    {
-                        //        Thread.sleep(2000);
-                        //    }
-                        //    catch(InterruptedException ex)
-                        //    {
-                        //        Thread.currentThread().interrupt();
-                        //    }
+                            // try
+                            // {
+                            //     Thread.sleep(2000);
+                            // }
+                            // catch(InterruptedException ex)
+                            // {
+                            //     Thread.currentThread().interrupt();
+                            // }
 
-                        //    Log.d("getCastStreamingUrl" , TritonPlayer.SETTINGS_STATION_NAME);
-                        //    if(mPlayer.getCastStreamingUrl() != null){
-                        //        Log.d("getCastStreamingUrl" , mPlayer.getCastStreamingUrl());
-                        //    }else{
-                        //        Log.d("getCastStreamingUrl" , "mPlayer.getCastStreamingUrl()");
-                        //    }
+                            // // Log.d("getCastStreamingUrl" , TritonPlayer.SETTINGS_STATION_NAME);
+                            // if(mPlayer.getCastStreamingUrl() != null){
+                            //     Log.d("getCastStreamingUrl" , mPlayer.getCastStreamingUrl());
+                            // }else{
+                            //     Log.d("getCastStreamingUrl" , "getCastStreamingUrl Error");
+                            // }
                         }catch (Exception e){
-                        //    Log.d("getCastStreamingUrl" , e.getMessage());
+                            // Log.d("getCastStreamingUrl" , e.getMessage());
                         }
                     }
                 }

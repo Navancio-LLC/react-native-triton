@@ -99,6 +99,7 @@ RCT_EXPORT_METHOD(playOnDemandStream:(NSString *)streamURL )
         SettingsPlayerServicesRegion: @"EU",
         SettingsEnableLocationTrackingKey : @(YES),
         SettingsTtagKey : @[@"PLAYER:NOPREROLL"]
+        SettingsStreamParamsExtraKey: extraSettings
     };
     
     // mm

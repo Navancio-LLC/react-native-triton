@@ -42,17 +42,21 @@ RCT_EXPORT_METHOD(play:(NSString *)tritonName tritonStation:(NSString *)tritonSt
         self.title = @"-";
         self.state = 0;
     }
+    NSDictionary *extraSettings = @{
+        StreamParamExtraCustomSegmentIdKey : @(7),
+        StreamParamExtraCountryKey: countryCode
+    };
+    
     // Set Station Details
     NSDictionary *settings = @{
-                               SettingsStationNameKey : tritonName,
-                               SettingsBroadcasterKey : @"Triton Digital",
-                               SettingsMountKey : tritonStation,
-                               SettingsPlayerServicesRegion: @"EU",
-                               SettingsEnableLocationTrackingKey : @(YES),
-                               StreamParamExtraCountryKey: countryCode,
-                               SettingsTtagKey : @[@"PLAYER:NOPREROLL"],
-                               @"csegid" : @(7)
-                               };
+        SettingsStationNameKey : tritonName,
+        SettingsBroadcasterKey : @"Triton Digital",
+        SettingsMountKey : tritonStation,
+        SettingsPlayerServicesRegion: @"EU",
+        SettingsEnableLocationTrackingKey : @(YES),
+        SettingsTtagKey : @[@"PLAYER:NOPREROLL"],
+        SettingsStreamParamsExtraKey: extraSettings
+    };
     
     // mm
     

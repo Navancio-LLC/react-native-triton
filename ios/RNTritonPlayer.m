@@ -98,7 +98,7 @@ RCT_EXPORT_METHOD(playOnDemandStream:(NSString *)streamURL )
         SettingsBroadcasterKey : @"Triton Digital",
         SettingsPlayerServicesRegion: @"EU",
         SettingsEnableLocationTrackingKey : @(YES),
-        SettingsTtagKey : @[@"PLAYER:NOPREROLL"]
+        SettingsTtagKey : @[@"PLAYER:NOPREROLL"],
         SettingsStreamParamsExtraKey: extraSettings
     };
     

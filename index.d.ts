@@ -1,7 +1,7 @@
 declare module 'react-native-triton-player' {
   //export function configure({brand});
 
-  export function play(tritonName, tritonMount, countryCode);
+  export function play(tritonName, tritonMount, countryCode, csegid);
 
   export function setNotificationStatus(status);
 

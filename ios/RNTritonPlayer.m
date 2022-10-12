@@ -33,7 +33,7 @@ RCT_EXPORT_METHOD(configure:(NSString *)brand)
     // Does nothing
 }
 
-RCT_EXPORT_METHOD(play:(NSString *)tritonName tritonStation:(NSString *)tritonStation  countryCode:(NSString *) countryCode)
+RCT_EXPORT_METHOD(play:(NSString *)tritonName tritonStation:(NSString *)tritonStation  countryCode:(NSString *) countryCode csegid:(NSString *)csegid)
 {
     // Init Triton Player if its not set yet
     if (self.tritonPlayer == NULL) {
@@ -43,7 +43,7 @@ RCT_EXPORT_METHOD(play:(NSString *)tritonName tritonStation:(NSString *)tritonSt
         self.state = 0;
     }
     NSDictionary *extraSettings = @{
-        StreamParamExtraCustomSegmentIdKey : @(7),
+        StreamParamExtraCustomSegmentIdKey : csegid,
         StreamParamExtraCountryKey: countryCode
     };
     
@@ -74,6 +74,7 @@ RCT_EXPORT_METHOD(play:(NSString *)tritonName tritonStation:(NSString *)tritonSt
     // Start Playing!
     [self.tritonPlayer play];
     
+    // NSLog(@"didReceiveCuePointEvent11: %@", [self.tritonPlayer getCastStreamingUrl]);
     // Notify stream change
     [self sendEventWithName:EventStreamChanged body:@{@"stream": tritonStation}];
 }

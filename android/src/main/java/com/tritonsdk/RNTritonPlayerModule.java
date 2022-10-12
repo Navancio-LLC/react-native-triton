@@ -65,7 +65,7 @@ public class RNTritonPlayerModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void play(String tritonName, String tritonMount, String countryCode) {
+    public void play(String tritonName, String tritonMount, String countryCode, String csegid) {
         initPlayer();
 
         if (mService != null) {
@@ -74,7 +74,7 @@ public class RNTritonPlayerModule extends ReactContextBaseJavaModule {
 
         Intent intent = new Intent(reactContext, PlayerService.class);
         intent.setAction(PlayerService.ACTION_PLAY);
-        intent.putExtra(PlayerService.ARG_STREAM, new Stream("", "", tritonName, tritonMount, countryCode));
+        intent.putExtra(PlayerService.ARG_STREAM, new Stream("", "", tritonName, tritonMount, countryCode, csegid));
         reactContext.bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
         reactContext.startService(intent);
     }

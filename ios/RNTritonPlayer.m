@@ -79,7 +79,7 @@ RCT_EXPORT_METHOD(play:(NSString *)tritonName tritonStation:(NSString *)tritonSt
     [self sendEventWithName:EventStreamChanged body:@{@"stream": tritonStation}];
 }
 
-RCT_EXPORT_METHOD(playOnDemandStream:(NSString *)streamURL )
+RCT_EXPORT_METHOD(playOnDemandStream:(NSString *)streamURL title:(NSString *)title subTitle:(NSString *)subTitle csegid:(NSString *)csegid)
 {
     // Init Triton Player if its not set yet
     if (self.tritonPlayer == NULL) {
@@ -90,7 +90,7 @@ RCT_EXPORT_METHOD(playOnDemandStream:(NSString *)streamURL )
     }
     
     NSDictionary *extraSettings = @{
-        StreamParamExtraCustomSegmentIdKey : @(7),
+        StreamParamExtraCustomSegmentIdKey : csegid,
     };
 
     // Set on demand Stream URL Details
@@ -118,6 +118,10 @@ RCT_EXPORT_METHOD(playOnDemandStream:(NSString *)streamURL )
     
     // Start Playing!
     [self.tritonPlayer play];
+    
+    // Update the notification player data
+    self.title = title;
+    self.track = subTitle;
     
     // Notify stream change
     //[self sendEventWithName:EventStreamChanged body:@{@"stream": tritonStation}];

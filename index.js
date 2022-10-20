@@ -113,8 +113,8 @@ class RNTritonPlayer {
     }
 	}
   
-  static playOnDemandStream(trackURL) {
-    NativeRNTritonPlayer.playOnDemandStream(trackURL);
+  static playOnDemandStream(trackURL, title, subTitle, playOnDemandStream) {
+    NativeRNTritonPlayer.playOnDemandStream(trackURL, title, subTitle, playOnDemandStream);
   }
 
   static stop() {

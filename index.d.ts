@@ -10,7 +10,7 @@ declare module 'react-native-triton-player' {
   ///IOS specific 
   export function updateNotificationDataWithLocalImage(imageObject, title, subTitle);
 
-  export function playOnDemandStream(trackURL);
+  export function playOnDemandStream(trackURL, title, subTitle, playOnDemandStream);
 
   export function pause();
 

@@ -149,13 +149,13 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
 
         HashMap<String, String> targetingParams = new HashMap();
 
-        // settings.putInt(TritonPlayer.SETTINGS_LOW_DELAY, -1);
+//        settings.putInt(TritonPlayer.SETTINGS_LOW_DELAY, -1);
         if (mCurrentStream != null)
         {
-            targetingParams.put(StreamUrlBuilder.CUSTOM_SEGMENT_ID,  mCurrentStream.getCsegid());
-            // Log.d("getCastStreamingUrl22" , mCurrentStream.getCsegid());
             settings.putString(TritonPlayer.SETTINGS_STATION_NAME, mCurrentStream.getTritonName());
             settings.putString(TritonPlayer.SETTINGS_STATION_MOUNT, mCurrentStream.getTritonMount());
+            targetingParams.put(StreamUrlBuilder.CUSTOM_SEGMENT_ID,  mCurrentStream.getCsegid());
+            // Log.d("getCastStreamingUrl22" , mCurrentStream.getCsegid());
 
             if(mCurrentStream.getCountryCode() != ""){
             //    Log.d("mCurrentStream", "dd "+mCurrentStream.getCountryCode());
@@ -170,6 +170,16 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
             settings.putString(TritonPlayer.SETTINGS_STREAM_URL, mCurrentOnDemandStream.getURL());
             settings.putBoolean(TritonPlayer.SETTINGS_FORCE_DISABLE_EXOPLAYER, true);
             settings.putBoolean(TritonPlayer.SETTINGS_TIMESHIFT_ENABLED, true);
+            targetingParams.put(StreamUrlBuilder.CUSTOM_SEGMENT_ID,  mCurrentOnDemandStream.getCsegid());
+            try
+            {
+                Thread.sleep(500);
+            }
+            catch(InterruptedException ex)
+            {
+                Thread.currentThread().interrupt();
+            }
+            this.updateNotificationData(null, mCurrentOnDemandStream.getTitle(), mCurrentOnDemandStream.getSubTitle());
         }
 
         settings.putSerializable(TritonPlayer.SETTINGS_TARGETING_PARAMS, targetingParams);

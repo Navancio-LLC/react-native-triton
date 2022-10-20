@@ -80,7 +80,7 @@ public class RNTritonPlayerModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void playOnDemandStream(String streamURL) {
+    public void playOnDemandStream(String streamURL, String title, String subTitle, String csegid) {
         initPlayer();
 
         if (mService != null) {
@@ -89,7 +89,7 @@ public class RNTritonPlayerModule extends ReactContextBaseJavaModule {
 
         Intent intent = new Intent(reactContext, PlayerService.class);
         intent.setAction(PlayerService.ACTION_PLAY);
-        intent.putExtra(PlayerService.ARG_ON_DEMAND_STREAM, new OnDemandStream(streamURL));
+        intent.putExtra(PlayerService.ARG_ON_DEMAND_STREAM, new OnDemandStream(streamURL, title, subTitle, csegid));
         reactContext.bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
         reactContext.startService(intent);
     }

@@ -148,12 +148,12 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
         settings.putString(TritonPlayer.SETTINGS_STATION_BROADCASTER, "Triton Digital");
 
         HashMap<String, String> targetingParams = new HashMap();
-        targetingParams.put(StreamUrlBuilder.CUSTOM_SEGMENT_ID,  mCurrentStream.getCsegid());
-        // Log.d("getCastStreamingUrl22" , mCurrentStream.getCsegid());
 
-//        settings.putInt(TritonPlayer.SETTINGS_LOW_DELAY, -1);
+        // settings.putInt(TritonPlayer.SETTINGS_LOW_DELAY, -1);
         if (mCurrentStream != null)
         {
+            targetingParams.put(StreamUrlBuilder.CUSTOM_SEGMENT_ID,  mCurrentStream.getCsegid());
+            // Log.d("getCastStreamingUrl22" , mCurrentStream.getCsegid());
             settings.putString(TritonPlayer.SETTINGS_STATION_NAME, mCurrentStream.getTritonName());
             settings.putString(TritonPlayer.SETTINGS_STATION_MOUNT, mCurrentStream.getTritonMount());
 

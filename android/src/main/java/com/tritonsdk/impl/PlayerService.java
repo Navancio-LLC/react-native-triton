@@ -149,7 +149,7 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
 
         HashMap<String, String> targetingParams = new HashMap();
 
-//        settings.putInt(TritonPlayer.SETTINGS_LOW_DELAY, -1);
+        // settings.putInt(TritonPlayer.SETTINGS_LOW_DELAY, -1);
         if (mCurrentStream != null)
         {
             settings.putString(TritonPlayer.SETTINGS_STATION_NAME, mCurrentStream.getTritonName());
@@ -158,7 +158,7 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
             // Log.d("getCastStreamingUrl22" , mCurrentStream.getCsegid());
 
             if(mCurrentStream.getCountryCode() != ""){
-            //    Log.d("mCurrentStream", "dd "+mCurrentStream.getCountryCode());
+                //    Log.d("mCurrentStream", "dd "+mCurrentStream.getCountryCode());
                 try
                 {
                     targetingParams.put(StreamUrlBuilder.COUNTRY_CODE,  mCurrentStream.getCountryCode());
@@ -305,6 +305,7 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
 
     public void quit() {
         stop();
+        releasePlayer();
         mBuilder = null;
         stopForeground(true);
     }
@@ -426,7 +427,7 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
         // );
 
 
-        final Integer[] states = {TritonPlayer.STATE_COMPLETED, TritonPlayer.STATE_STOPPED, TritonPlayer.STATE_ERROR, TritonPlayer.STATE_PAUSED};
+        final Integer[] states = {TritonPlayer.STATE_COMPLETED, TritonPlayer.STATE_STOPPED, TritonPlayer.STATE_ERROR};
         if (Arrays.asList(states).contains(state)) {
             AudioManager audioManager = getAudioManager();
             if (audioManager != null) {

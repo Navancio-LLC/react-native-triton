@@ -122,6 +122,7 @@ RCT_EXPORT_METHOD(playOnDemandStream:(NSString *)streamURL title:(NSString *)tit
     // Update the notification player data
     self.title = title;
     self.track = subTitle;
+    self.albumArt = NULL;
     
     // Notify stream change
     //[self sendEventWithName:EventStreamChanged body:@{@"stream": tritonStation}];

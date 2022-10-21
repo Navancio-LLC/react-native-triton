@@ -257,9 +257,9 @@ RCT_EXPORT_METHOD(quit)
 
 - (void)playerBeginInterruption:(TritonPlayer *) player {
     if (self.tritonPlayer != NULL && [self.tritonPlayer isExecuting]) {
-        [self.tritonPlayer stop];
+        [self.tritonPlayer pause];
         [self sendEventWithName:EventStateChanged body:@{@"state": @(STATE_RELEASED)}];
-//        self.tritonPlayer = NULL;
+        // self.tritonPlayer = NULL;
         self.interruptedOnPlayback = YES;
     }
 }
@@ -267,6 +267,7 @@ RCT_EXPORT_METHOD(quit)
 - (void)playerEndInterruption:(TritonPlayer *) player {
     if (self.tritonPlayer != NULL && self.interruptedOnPlayback) {
         self.interruptedOnPlayback = NO;
+        [self.tritonPlayer play];
     }
 }
 

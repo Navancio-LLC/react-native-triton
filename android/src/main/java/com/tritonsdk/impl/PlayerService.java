@@ -500,7 +500,10 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
         mBuilder
                 .setVibrate(new long[]{0L})
                 .setSound(null)
+//                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
                 .setCustomContentView(mRemoteViews)
+                .setCustomBigContentView(mRemoteViews)
+                .setContent(mRemoteViews) //To support Android versions older than Android 4.1 (API level 16)
                 .setOngoing(true)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.drawable.ic_player_notification); //small icon
@@ -540,7 +543,8 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
                         if(albumArtUrl.contains("http://") || albumArtUrl.contains("https://")){
                             URL url = new URL(albumArtUrl);
                             bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                            
+                            bitmap = Bitmap.createScaledBitmap(bitmap,128,128,false);
+
                             // bitmap = Glide.with(getApplicationContext())
                             //     .asBitmap()
                             //     .load(albumArtUrl)
@@ -580,16 +584,16 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
         if (isShowingNotification()) {
             Intent stopIntent = new Intent(this, PlayerService.class);
             stopIntent.setAction(ACTION_STOP);
-            PendingIntent pausePendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pausePendingIntent = PendingIntent.getService(this, 0, stopIntent,PendingIntent.FLAG_IMMUTABLE);
 
             Intent quitIntent = new Intent(this, PlayerService.class);
             quitIntent.setAction(ACTION_QUIT);
-            PendingIntent pendingQuitIntent = PendingIntent.getService(this, 0, quitIntent, 0);
+            PendingIntent pendingQuitIntent = PendingIntent.getService(this, 0, quitIntent,PendingIntent.FLAG_IMMUTABLE);
 
             Intent playIntent = new Intent(this, PlayerService.class);
             //playIntent.putExtra(ARG_STATION, mCurrentStation);
             playIntent.setAction(ACTION_PLAY);
-            PendingIntent playPendingIntent = PendingIntent.getService(this, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent playPendingIntent = PendingIntent.getService(this, 0, playIntent,PendingIntent.FLAG_IMMUTABLE);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 ActivityManager activityManager = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
@@ -606,7 +610,7 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
                     }
 
                     if (target != null) {
-                        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, target, PendingIntent.FLAG_UPDATE_CURRENT);
+                        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, target,PendingIntent.FLAG_IMMUTABLE);
                         mRemoteViews.setOnClickPendingIntent(R.id.notification_clickable_content, contentIntent);
                     }
                 }

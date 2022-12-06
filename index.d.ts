@@ -33,6 +33,9 @@ declare module 'react-native-triton-player' {
   export function addTrackChangeListener(callback);
 
   export function addStateChangeListener(callback);
+  
+  /// Android specific
+  export function addActionPerformedListener(callback);
 
   export function addCurrentPlaybackTimeChangeListener(callback);
 }

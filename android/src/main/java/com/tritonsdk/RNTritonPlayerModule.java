@@ -30,6 +30,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
 public class RNTritonPlayerModule extends ReactContextBaseJavaModule {
     private static final String EVENT_TRACK_CHANGED = "trackChanged";
     private static final String EVENT_STATE_CHANGED = "stateChanged";
+    private static final String EVENT_ACTION_PERFORMED = "actionPerformed";
     private static final String EVENT_STREAM_CHANGED = "streamChanged";
 
     private static final String EVENT_CURRENT_PLAYBACK_TIME_CHANGED = "currentPlaybackTimeChanged";
@@ -206,6 +207,14 @@ public class RNTritonPlayerModule extends ReactContextBaseJavaModule {
         sendEvent(EVENT_TRACK_CHANGED, map);
     }
 
+    private void onActionPerformed(String action) {
+        if(action != null){
+            WritableMap map = Arguments.createMap();
+            map.putString("action", action);
+            sendEvent(EVENT_ACTION_PERFORMED, map);
+        }
+    }
+
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
@@ -233,6 +242,7 @@ public class RNTritonPlayerModule extends ReactContextBaseJavaModule {
         filter.addAction(PlayerService.EVENT_TRACK_CHANGED);
         filter.addAction(PlayerService.EVENT_STREAM_CHANGED);
         filter.addAction(PlayerService.EVENT_STATE_CHANGED);
+        filter.addAction(PlayerService.EVENT_ACTION_PERFORMED);
         reactContext.registerReceiver(mReceiver, filter);
     }
 
@@ -253,6 +263,9 @@ public class RNTritonPlayerModule extends ReactContextBaseJavaModule {
                 case PlayerService.EVENT_STATE_CHANGED:
                     int state = intent.getIntExtra(PlayerService.ARG_STATE, -1);
                     onStateChanged(state);
+                case PlayerService.EVENT_ACTION_PERFORMED:
+                    String action = intent.getStringExtra(PlayerService.ARG_ACTION);
+                    onActionPerformed(action); 
                 case PlayerService.EVENT_CURRENT_PLAYBACK_TIME_CHANGED:
                     int offset = intent.getIntExtra(PlayerService.ARG_PLAY_OFFSET, -2);
                     onPlaybackTimeChanged(offset);

@@ -46,6 +46,7 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
     public static final String ARG_ON_DEMAND_STREAM = "on_demand_stream";
     public static final String ARG_TRACK = "track";
     public static final String ARG_STATE = "state";
+    public static final String ARG_ACTION = "action";
     public static final String ARG_PLAY_OFFSET = "play_offset";
     public static final String DEFAULT_CHANNEL = "default";
     public static final String ACTION_INIT = "PlayerService.ACTION_INIT";
@@ -57,6 +58,7 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
     public static final String EVENT_TRACK_CHANGED = "PlayerService.EVENT_TRACK_CHANGED";
     public static final String EVENT_STREAM_CHANGED = "PlayerService.EVENT_STREAM_CHANGED";
     public static final String EVENT_STATE_CHANGED = "PlayerService.EVENT_STATE_CHANGED";
+    public static final String EVENT_ACTION_PERFORMED = "PlayerService.EVENT_ACTION_PERFORMED";
     public static final String EVENT_CURRENT_PLAYBACK_TIME_CHANGED = "PlayerService.EVENT_CURRENT_PLAYBACK_TIME_CHANGED";
     public static final int NOTIFICATION_SERVICE = 8;
     public static boolean IS_NOTIF_ACTIVE = true;
@@ -89,6 +91,7 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
                     // nothing
                     break;
                 case ACTION_PLAY:
+                    notifyActionPerformed("PLAY");
                     if (intent.hasExtra(ARG_STREAM)) {
                         mCurrentStream = (Stream) intent.getSerializableExtra(ARG_STREAM);
                         notifyStationUpdate();
@@ -108,11 +111,13 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
                     play();
                     break;
                 case ACTION_QUIT:
+                    notifyActionPerformed("QUIT");
                     //releasePlayer();
                     quit();
                     //stopSelf();
                     break;
                 case ACTION_STOP:
+                    notifyActionPerformed("STOP");
                     stop();
                     break;
             }
@@ -410,6 +415,12 @@ public class PlayerService extends Service implements TritonPlayer.OnCuePointRec
         Intent intent = new Intent(EVENT_STATE_CHANGED);
         intent.putExtra(ARG_STREAM, mCurrentStream);
         intent.putExtra(ARG_STATE, state);
+        sendBroadcast(intent);
+    }
+
+    private void notifyActionPerformed(String action) {
+        Intent intent = new Intent(EVENT_ACTION_PERFORMED);
+        intent.putExtra(ARG_ACTION, action);
         sendBroadcast(intent);
     }
 

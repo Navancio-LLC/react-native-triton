@@ -152,6 +152,13 @@ class RNTritonPlayer {
     }
   }
 
+  static addActionPerformedListener(callback) {
+    if (Platform.OS === 'android') {
+      const tritonEmitter = new NativeEventEmitter(NativeRNTritonPlayer);
+      tritonEmitter.addListener('actionPerformed', callback);
+    }
+  }
+
   static addCurrentPlaybackTimeChangeListener(callback) {
     if (Platform.OS === 'ios') {
       const tritonEmitter = new NativeEventEmitter(NativeRNTritonPlayer);

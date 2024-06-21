@@ -236,10 +236,20 @@ RCT_EXPORT_METHOD(quit)
         // Type CUE track
         
 //        NSLog(@"didReceiveCuePointEvent: track");
-        NSString *songTitle = [cuePointEvent.data objectForKey:CommonCueTitleKey];
-        NSString *artistName = [cuePointEvent.data objectForKey:TrackArtistNameKey];
+        NSString *_songTitle = [cuePointEvent.data objectForKey:CommonCueTitleKey];
+        NSString *_artistName = [cuePointEvent.data objectForKey:TrackArtistNameKey];
         NSString *durationTime = [cuePointEvent.data objectForKey:CommonCueTimeDurationKey];
-        
+            
+        NSString *songTitle = @"-";
+        if ([_songTitle length] != 0) {
+            songTitle = _songTitle;
+        }
+
+        NSString *artistName = @"-";
+        if ([_artistName length] != 0) {
+            artistName = _artistName;
+        }
+    
         NSInteger duration = 0;
         
         if (durationTime != NULL) {

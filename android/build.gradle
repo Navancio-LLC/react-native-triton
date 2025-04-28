@@ -36,11 +36,14 @@ repositories {
         url("$rootDir/../node_modules/react-native/android")
     }
     google()
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
+    implementation(name: 'triton-android-sdk-3.2.4', ext: 'aar')
 
-	implementation files('./libs/triton-android-sdk-3.2.4.aar')
     implementation 'com.facebook.react:react-native:0.20.1'
 
     implementation 'com.google.android.gms:play-services-base:17.6.0'
